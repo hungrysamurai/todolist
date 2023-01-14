@@ -1,19 +1,73 @@
-const someListDragarea = document.querySelector(".todos-container");
-new Sortable(someListDragarea, {
-  animation: 350,
-});
+const { body } = document;
+const mainContainer = document.querySelector(".main-container");
+const currentListTitle = document.querySelector(".list-heading");
+const inputForm = document.querySelector(".form");
+const todoInput = document.querySelector(".input");
+const currentTodosContainer = document.querySelector(".todos-container");
 
-document.querySelectorAll(".todo").forEach((todo, i) => {
-  todo.addEventListener("drop", () => {
-    resetIndexes(document.querySelectorAll(".todo"));
+let listsArray = [];
+let currentList = [];
+
+inputForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const text = todoInput.value;
+  console.log(currentList.length);
+  currentTodosContainer.append(createToDoItem(text));
+  todoInput.value = "";
+
+  resetIndexes(document.querySelectorAll(".todo"));
+
+  let todoObject = {
+    text: text,
+    status: "active",
+    currentID: currentList.length,
+  };
+  currentList.push(todoObject);
+
+  console.log(currentList);
+
+  document.querySelectorAll(".todo").forEach((todo, i) => {
+    todo.addEventListener("drop", () => {
+      resetIndexes(document.querySelectorAll(".todo"));
+    });
   });
 });
+
+const createToDoItem = (text) => {
+  const container = document.createElement("div");
+  container.classList.add("todo");
+
+  container.innerHTML = `
+<button class="check-button">
+  <i class="far fa-light fa-circle"></i>
+</button>
+
+<div class="todo-text">
+<p>${text}</p>
+</div>
+
+<button class="trash-button">
+  <i class="fas fa-solid fa-trash-can"></i>
+</button>
+`;
+
+  return container;
+};
+
+initSortable(currentTodosContainer);
+
+function initSortable(list) {
+  new Sortable(list, {
+    animation: 350,
+  });
+}
 
 function resetIndexes(todos) {
   todos.forEach((todo, i) => {
     todo.dataset.index = i;
   });
 }
+
 // const form = document.getElementById('form')
 // const input = document.getElementById('input')
 // const todosUL = document.getElementById('todos')

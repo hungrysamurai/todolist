@@ -71,19 +71,25 @@ body {
   background-color: var(--color-dark2);
   color: #fff;
   font-size: calc(var(--index) * 1);
+  font-family: 'Jost', sans-serif;
   padding: 1rem 2rem;
   display: block;
   width: 100%;
 }
 
+input::selection {
+  background-color: var(--color-red);
+}
+
 .input::placeholder {
   color: #fff;
   opacity: 0.3;
-  font-family: 'Jost', sans-serif;
+  font-family: inherit;
 }
 
-.input:focus {
+.form .input:focus {
   outline-color: var(--color-light);
+  box-shadow: 2px 2px 12px var(--color-light);
 }
 
 /* ToDos Container */
@@ -100,10 +106,12 @@ body {
   background-color: var(--color-dark2);
   padding: 1rem 1.5rem;
   font-size: calc(var(--index) * 1.2);
+  text-align: left;
   box-shadow: 2px 2px 12px var(--color-red);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: grab;
 }
 
 
@@ -130,6 +138,68 @@ body {
 
 .todo .check-button {
   margin-right: 1rem;
+}
+
+.todo .todo-text {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+/* ??????????????????????????????????????? */
+.todo .todo-text p {
+  word-break: break-all;
+}
+
+/* All lists container */
+.overlay {
+  position: absolute;
+  background-color: rgba(16, 16, 16, 0.33);
+  opacity: 1;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(18px);
+}
+
+.overlay.hidden {
+  visibility: hidden;
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+.all-lists-container {
+  position: fixed;
+  right: 0;
+  background-color: var(--color-dark2);
+  width: 40%;
+  height: 150%;
+  box-shadow: 2px 2px 12px var(--color-light);
+  transition: right var(--transition);
+  /* overflow-y: scroll; */
+}
+
+.all-lists-container.hidden {
+  right: -40%;
+}
+
+.all-lists-container ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  margin: 1rem 2rem;
+  font-size: calc(var(--index) * 1.3);
+}
+
+.all-lists-container ul li {
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.all-lists-container ul li:hover {
+  color: var(--color-red);
 }
 
 .buttons-container {
