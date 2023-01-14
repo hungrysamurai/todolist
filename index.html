@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="./style.css" />
+  <title>ToDoList</title>
+</head>
+
+<body>
+  <h1 class="title">ToDoList</h1>
+  <div class="main-container">
+    <h2 class="list-heading">Some List</h2>
+    <form id="form" class="form">
+      <input type="text" class="input" id="input" placeholder="А ещё нужно сделать..." autocomplete="off" />
+    </form>
+
+    <!-- ToDos List -->
+    <div class="todos-container">
+
+      <div class="todo" data-index="1">
+        <button class="check-button">
+          <i class="far fa-light fa-circle"></i>
+        </button>
+        <span class="todo-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur, nihil.</span>
+        <button class="trash-button">
+          <i class="fas fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+
+      <div class="todo" data-index="2">
+        <button class="check-button">
+          <i class="far fa-light fa-circle"></i>
+        </button>
+        <span class="todo-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur, nihil.</span>
+        <button class="trash-button">
+          <i class="fas fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+
+      <div class="todo" data-index="3">
+        <button class="check-button">
+          <i class="far fa-light fa-circle"></i>
+        </button>
+        <span class="todo-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur, nihil.</span>
+        <button class="trash-button">
+          <i class="fas fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+
+      <div class="todo" data-index="4">
+        <button class="check-button">
+          <i class="far fa-light fa-circle"></i>
+        </button>
+        <span class="todo-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur, nihil.</span>
+        <button class="trash-button">
+          <i class="fas fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+
+      <div class="todo" data-index="5">
+        <button class="check-button">
+          <i class="far fa-light fa-circle"></i>
+        </button>
+        <span class="todo-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur, nihil.</span>
+        <button class="trash-button">
+          <i class="fas fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+
+      <div class="todo" data-index="6">
+        <button class="check-button">
+          <i class="far fa-light fa-circle"></i>
+        </button>
+        <span class="todo-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur, nihil.</span>
+        <button class="trash-button">
+          <i class="fas fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+
+      <div class="todo" data-index="7">
+        <button class="check-button">
+          <i class="far fa-light fa-circle"></i>
+        </button>
+        <span class="todo-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur, nihil.</span>
+        <button class="trash-button">
+          <i class="fas fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Add new List Button/List of Lists container expand -->
+  <div class="buttons-container">
+
+    <div class="add-new-list-btn">
+      <i class="fas fa-solid fa-plus"></i>
+    </div>
+
+    <div class="lists-button">
+      <i class="fas fa-duotone fa-list-check"></i>
+    </div>
+
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"
+    integrity="sha512-Eezs+g9Lq4TCCq0wae01s9PuNWzHYoCMkE97e2qdkYthpI0pzC3UGB03lgEHn2XM85hDOUF6qgqqszs+iXU4UA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
