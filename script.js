@@ -10,6 +10,13 @@ const allListsButton = document.querySelector('.lists-button');
 const allListsContainer = document.querySelector('.all-lists-container');
 
 // Classes
+class ToDoListData {
+  constructor(title, toDos) {
+    this.title = title;
+    this.toDos = toDos;
+  }
+}
+
 class ToDoItem {
   constructor(text, status) {
     this.text = text;
@@ -17,27 +24,59 @@ class ToDoItem {
   }
 }
 
-
 class ToDoList {
-  constructor(title, listContainer, titleElement) {
+  constructor(listContainer, titleElement, { title, data }) {
+
+    console.log(data);
+
     this.todosContainer = listContainer;
     this.titleElement = titleElement;
 
-    this.title;
     this.todos = [];
     this.todosDOM;
     this.currentSortable;
 
-    this.title = this.changeTitle(title);
+    // Init title
+    this.titleElement.textContent = title;
+    this.title = title;
+    this.addTitleListeners();
+
   }
   // Change current title
   changeTitle(text) {
-    this.title = text;
     this.titleElement.textContent = text;
+    return text;
+  }
+
+  addTitleListeners() {
+    this.titleElement.addEventListener('input', (e) => {
+      let oldTitle = this.title;
+
+      this.title = this.changeTitle(e.target.textContent);
+
+      if (!this.title) {
+        this.title = this.changeTitle('Undefined list');
+      }
+
+      // Update title of current list in localStorage
+      this.updateLS(this.title)
+    });
+
+    this.titleElement.addEventListener('keydown', (e) => {
+      if (e.target.textContent.length > 40 && e.keyCode != 8) {
+        e.preventDefault();
+      }
+    });
   }
 
   // Add new ToDo
   addNewToDo(text) {
+    // Check if there text at all
+    if (!text) return;
+
+    // Check if text already exist in list
+    if (this.todos.find(el => el.text === text)) return;
+
     this.todos.push(new ToDoItem(text, 'active'));
     this.renderToDOM();
   }
@@ -61,10 +100,10 @@ class ToDoList {
       this.todos[index].status = 'active';
     }
 
-    console.log(this.todos[index]);
   }
 
   renderToDOM() {
+    console.log(this);
     // Reset container
     this.todosContainer.innerHTML = '';
 
@@ -74,6 +113,7 @@ class ToDoList {
     });
     this.addClickEvents();
     this.addDragEvents();
+
   }
 
   createDOMElement(todo, index) {
@@ -150,9 +190,60 @@ class ToDoList {
 
     return sorted;
   }
+
+  exportData() {
+    let title = this.title;
+    let data = this.todos;
+    return new ToDoListData(title, data);
+  }
+
+  updateLS(newTitle) {
+    // Get current list in localStorage
+    const currentList = JSON.parse(localStorage.getItem('todoList_active'));
+
+    // Parse localStorage
+    const allLists = JSON.parse(localStorage.getItem('todoList'));
+
+    // Find corresponding object in parsed localStorage
+    let activeList = allLists.find(list => list.title === currentList);
+
+    // Set title in parsed localStorage
+    activeList.title = newTitle;
+
+    // Update localStorage properties
+    localStorage.setItem('todoList', JSON.stringify(allLists))
+    localStorage.setItem('todoList_active', JSON.stringify(newTitle))
+  }
 }
 
-let currentList = new ToDoList('My first list', currentTodosContainer, currentListTitle);
+let currentList;
+
+// localStorage
+
+if (!localStorage.getItem('todoList')) {
+  currentList = new ToDoList(currentTodosContainer, currentListTitle, { title: 'Новый список дел' });
+
+  let currentItems = [];
+  currentItems.push(currentList.exportData())
+
+  localStorage.setItem('todoList', JSON.stringify(currentItems));
+  localStorage.setItem('todoList_active', JSON.stringify(currentList.title));
+
+} else {
+
+  const savedLists = JSON.parse(localStorage.getItem('todoList'));
+
+  // Find active list
+  const activeListSaved = JSON.parse(localStorage.getItem('todoList_active'));
+  let activeList = savedLists.find(list => list.title === activeListSaved);
+
+  // Set current list to active list
+  currentList = new ToDoList(currentTodosContainer, currentListTitle, { title: activeList.title, data: activeList.toDos });
+
+}
+
+
+// currentList = new ToDoList('Новый список задач', currentTodosContainer, currentListTitle);
 
 // Add new todo to current list
 inputForm.addEventListener("submit", (e) => {
@@ -161,183 +252,3 @@ inputForm.addEventListener("submit", (e) => {
   currentList.addNewToDo(todoInput.value);
   todoInput.value = "";
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// function createToDoItem(text) {
-
-//   const container = document.createElement("div");
-//   // container.className = status === 'active' ? 'todo' : 'todo done';
-//   // container.dataset.index = index;
-
-//   container.innerHTML = `
-// <button class="check-button">
-  // <i class="far fa-light ${status === "active" ? 'fa-circle' : 'fa-circle-check'}"></i>
-// </button>
-
-// <div class="todo-text">
-// <p>${text}</p>
-// </div>
-
-// <button class="trash-button">
-//   <i class="fas fa-solid fa-trash-can"></i>
-// </button>
-// `;
-
-//   return container;
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // let tempData = {
-// //   activeList: 'my second list',
-// //   'my first list': [
-// //     {
-// //       text: 'First very interesting task',
-// //       status: 'active',
-// //     },
-// //     {
-// //       text: 'Second very very interesting task',
-// //       status: 'active'
-// //     },
-// //     {
-// //       text: 'Third amazing task',
-// //       status: 'done'
-// //     },
-// //     {
-// //       text: 'Theoden rides forth!',
-// //       status: 'active'
-// //     }
-// //   ],
-// //   'my second list': [
-// //     {
-// //       text: 'Some task from second list',
-// //       status: 'active',
-// //     },
-// //     {
-// //       text: 'Some task from second list',
-// //       status: 'done'
-// //     },
-// //     {
-// //       text: 'Some task from second list',
-// //       status: 'active'
-// //     },
-// //     {
-// //       text: 'Theoden rides forth!',
-// //       status: 'active'
-// //     }
-// //   ],
-// // };
-
-// // Init current list
-// let currentList;
-
-// if (tempData) {
-//   initList(tempData);
-// } else {
-
-// }
-
-
-// function initList(data) {
-//   console.log(data[data.activeList]);
-//   console.log(data);
-
-
-//   // // Set current list to active list in data storage
-
-//   // currentTitle = `${data.activeList}`;
-
-//   // // Render current list to DOM
-//   // renderList(currentList, currentTitle);
-// }
-
-// function renderList(list, title) {
-
-//   // Reset container
-//   currentTodosContainer.innerHTML = '';
-//   currentListTitle.textContent = title;
-
-//   currentListTitle.addEventListener('input', (e) => {
-//     const newTitle = e.target.textContent;
-//     updateState(newTitle);
-//   })
-
-//   list.forEach((todo, index) => {
-//     currentTodosContainer.append(createToDoItem(todo.text, todo.status, index));
-//   })
-
-//   document.querySelectorAll(".todo").forEach((todo, i) => {
-//     todo.addEventListener("drop", () => {
-//       resetIndexes(document.querySelectorAll(".todo"));
-//     });
-//   });
-
-//   initSortable(currentTodosContainer);
-// }
-
-
-
-
-
-
-// function initSortable(list) {
-//   new Sortable(list, {
-//     animation: 350,
-//   });
-// };
-
-// function resetIndexes(todos) {
-//   todos.forEach((todo, i) => {
-//     todo.dataset.index = i;
-//   });
-// };
-
-// function updateState(title = undefined) {
-//   if (title) {
-//     // Update list title, if title provided
-//     tempData[title] = tempData[currentTitle];
-//     delete tempData[currentTitle];
-//     currentTitle = title;
-//     tempData.activeList = title;
-//   }
-
-//   console.log(tempData, currentTitle);
-// }
-
-// // Toggle lists container
-// allListsButton.addEventListener('click', () => {
-//   overlay.classList.toggle('hidden');
-//   body.classList.toggle('no-scroll');
-//   allListsContainer.classList.toggle('hidden')
-// });
