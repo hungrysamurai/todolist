@@ -18,7 +18,9 @@
   <body>
     <h1 class="title">ToDoList</h1>
     <div class="main-container">
-      <h2 class="list-heading" contenteditable>Some List</h2>
+      <div class="list-container">
+        <h2 class="list-heading" contenteditable>Some List</h2>
+      </div>
       <form id="form" class="form">
         <input
           type="text"
@@ -37,12 +39,15 @@
     <div class="overlay hidden"></div>
     <div class="all-lists-container hidden">
       <ul>
-        <!-- <li>Some List</li>
-        <li>Some List</li>
-        <li>Some List</li>
-        <li>Some List</li>
-        <li>Some List</li>
-        <li>Some List</li> -->
+        <div class="list-item">
+          <span class="list-title"
+            >Lorem ipsum dolor sit amet consectetur.</span
+          >
+          <i class="fas fa-solid fa-trash-can"></i>
+        </div>
+        <!-- <li>
+          Lorem ipsum dolor sit amet.<i class="fas fa-solid fa-trash-can"></i>
+        </li> -->
       </ul>
     </div>
 

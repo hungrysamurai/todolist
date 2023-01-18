@@ -1,7 +1,8 @@
 // DOM Elements
 const { body } = document;
 const mainContainer = document.querySelector(".main-container");
-const currentListTitle = document.querySelector(".list-heading");
+// const titleContainer = document.querySelector(".list-heading");
+const titleContainer = document.querySelector(".list-container");
 const inputForm = document.querySelector(".form");
 const todoInput = document.querySelector(".input");
 const currentTodosContainer = document.querySelector(".todos-container");
@@ -16,6 +17,7 @@ class ToDoListData {
   constructor(title, todos) {
     this.title = title;
     this.todos = todos;
+    this.id = Math.floor(Math.random() * 100000);
   }
 }
 
@@ -27,16 +29,20 @@ class ToDoItem {
 }
 
 class ToDoList {
-  constructor(listContainer, titleElement, { title, data }) {
+  constructor(listContainer, titleContainer, listData) {
+    const { title, todos, id } = listData;
+    // Create editable title element for current list
+
 
     this.todosContainer = listContainer;
-    this.titleElement = titleElement;
-
-    this.todos = [];
+    this.titleElement = this.createTitleElement(titleContainer);
     this.todosDOM;
 
-    if (data?.length) {
-      data.forEach(todo => {
+    this.id = id;
+    this.todos = [];
+
+    if (todos?.length) {
+      todos.forEach(todo => {
         this.todos.push(todo);
       });
     }
@@ -48,8 +54,30 @@ class ToDoList {
     this.titleElement.textContent = title;
     this.title = title;
     this.addTitleListeners();
+    // Set selection and focus on title
+    let range = new Range();
+    range.setStartBefore(this.titleElement.firstChild);
+    range.setEndAfter(this.titleElement.firstChild);
+
+    document.getSelection().removeAllRanges();
+    document.getSelection().addRange(range);
+
+    this.titleElement.focus()
 
   }
+
+  createTitleElement(titleContainer) {
+    titleContainer.innerHTML = '';
+
+    const newTitleEl = document.createElement('h2');
+    newTitleEl.classList.add('list-heading');
+    newTitleEl.setAttribute('contenteditable', true);
+
+    titleContainer.append(newTitleEl);
+
+    return newTitleEl;
+  }
+
   // Change current title
   changeTitle(text) {
     this.titleElement.textContent = text;
@@ -58,8 +86,9 @@ class ToDoList {
 
   addTitleListeners() {
     this.titleElement.addEventListener('input', (e) => {
+      // console.log(e);
       this.title = this.changeTitle(e.target.textContent);
-
+      // console.log(this);
       if (!this.title) {
         // this.title = this.changeTitle('Undefined list');
         alert('Добавьте название списка!')
@@ -67,10 +96,9 @@ class ToDoList {
       }
 
       // Check if list with identical name exist
-      let collisions = JSON.parse(localStorage.getItem('todoList')).filter(el => el.title === this.title);
-      if (collisions.length === 2) return
+      // let collisions = JSON.parse(localStorage.getItem('todoList')).filter(el => el.title === this.title);
+      // if (collisions.length === 2) return
 
-      console.log(collisions);
       // Update title of current list in localStorage
       this.updateLSTitle(this.title);
     });
@@ -91,9 +119,7 @@ class ToDoList {
     if (this.todos.find(el => el.text === text)) return;
 
     this.todos.push(new ToDoItem(text, 'active'));
-
     this.updateLSToDos();
-
     this.renderToDOM();
   }
 
@@ -208,146 +234,206 @@ class ToDoList {
     return sorted;
   }
 
-  exportData() {
-    let title = this.title;
-    let data = this.todos;
-    return new ToDoListData(title, data);
-  }
-
   updateLSTitle(newTitle) {
-    // Get current list in localStorage
-    const currentList = JSON.parse(localStorage.getItem('todoList_active'));
-
     // Parse localStorage
     const allLists = JSON.parse(localStorage.getItem('todoList'));
 
     // Find corresponding object in parsed localStorage
-    let activeList = allLists.find(list => list.title === currentList);
+    let activeList = allLists.find(list => list.id === this.id);
 
     // Set title in parsed localStorage
     activeList.title = newTitle;
 
     // Update localStorage properties
     localStorage.setItem('todoList', JSON.stringify(allLists))
-    localStorage.setItem('todoList_active', JSON.stringify(newTitle))
+    localStorage.setItem('todoList_active', JSON.stringify(activeList.id));
   }
 
   updateLSToDos() {
-    // Get current list in localStorage
-    const currentList = JSON.parse(localStorage.getItem('todoList_active'));
-
     // Parse localStorage
     const allLists = JSON.parse(localStorage.getItem('todoList'));
 
     // Find corresponding object in parsed localStorage
-    let activeList = allLists.find(list => list.title === currentList);
+    let activeList = allLists.find(list => list.id === this.id);
 
-    // Reset toDos in current list in LS
+    // Reset todos in parsed version of localStorage
     activeList.todos = [];
-    // Push all todos to list
+
+    // Push all todos to parsed version of localStorage
     this.todos.forEach(todo => activeList.todos.push(todo));
+
     // Set localStorage
     localStorage.setItem('todoList', JSON.stringify(allLists));
   }
 }
 
-
 // Init
 let currentList;
+let allTitles = [];
 
 // Get items from localStorage
-if (!localStorage.getItem('todoList')) {
+if (!localStorage.getItem('todoList')) initLocalStorage()
+else loadLocalStorage();
 
-  currentList = new ToDoList(currentTodosContainer, currentListTitle, { title: 'Новый список дел' });
+// Events listener on editable title
+mainContainer.addEventListener('input', (e) => {
+  if (e.target === currentList.titleElement) {
+    updateListOfLists();
+  }
+});
 
-  localStorage.setItem('todoList', JSON.stringify([currentList.exportData()]));
-  localStorage.setItem('todoList_active', JSON.stringify(currentList.title));
+// Reveal/hide all lists
+allListsButton.addEventListener('click', () => {
+  overlay.classList.toggle('hidden');
+  allListsContainer.classList.toggle('hidden');
+  body.classList.toggle('no-scroll');
+})
 
-  // Add new todo to current list
-  inputForm.addEventListener("submit", activateForm);
 
-} else {
-
-  const savedLists = JSON.parse(localStorage.getItem('todoList'));
-
-  // Find active list
-  const activeListSaved = JSON.parse(localStorage.getItem('todoList_active'));
-  let activeList = savedLists.find(list => list.title === activeListSaved);
-
-  // Set current list to active list
-  currentList = new ToDoList(currentTodosContainer, currentListTitle, { title: activeList.title, data: activeList.todos });
-
-  // Add new todo to current list
-  inputForm.addEventListener("submit", activateForm);
-}
+addNewListBtn.addEventListener('click', addNewList);
 
 // Init list of lists
 function updateListOfLists() {
   listOfListsEl.innerHTML = '';
 
-  const listOflists = JSON.parse(localStorage.getItem('todoList'));
+  const parsed = JSON.parse(localStorage.getItem('todoList'));
 
-  listOflists.forEach(list => {
-    const { title } = list;
-    const listElement = document.createElement('li');
-    listElement.textContent = title;
+  parsed.forEach(list => {
+    const { title, id } = list;
+    const listElement = document.createElement('div');
+    listElement.classList.add('list-item');
 
-    if (JSON.parse(localStorage.getItem('todoList_active')) === title) {
-      listElement.classList.add('active');
+    const listTitleText = document.createElement('span');
+    listTitleText.classList.add('list-title');
+    listTitleText.dataset.listid = id;
+    listTitleText.textContent = title;
+
+    listTitleText.addEventListener('click', (e) => {
+      changeList(e.target.dataset.listid)
+    });
+
+    if (JSON.parse(localStorage.getItem('todoList_active')) === id) {
+      listTitleText.classList.add('active');
     }
-    listElement.addEventListener('click', changeList)
+
+    const deleteIcon = document.createElement('i');
+    deleteIcon.className = 'fas fa-solid fa-trash-can';
+    deleteIcon.dataset.listid = id;
+
+    deleteIcon.addEventListener('click', deleteList)
+
+    listElement.append(listTitleText, deleteIcon);
+
+
     listOfListsEl.appendChild(listElement);
+
   });
 }
 
-currentListTitle.addEventListener('input', updateListOfLists);
-updateListOfLists();
-
-
-
-allListsButton.addEventListener('click', () => {
-  overlay.classList.toggle('hidden');
-  allListsContainer.classList.toggle('hidden');
-  body.classList.toggle('no-scroll')
-})
-
-
-addNewListBtn.addEventListener('click', () => {
+function addNewList() {
   // Parse current current localStorage
-  const currentStorage = JSON.parse(localStorage.getItem('todoList'));
-  console.log(currentStorage);
+  const parsed = JSON.parse(localStorage.getItem('todoList'));
+
   // Init new list
-  let newList = new ToDoListData('Новый список дел', []);
+  const newList = new ToDoListData('Новый список дел', []);
 
   // Check for name
-  if (currentStorage.find(list => list.title === newList.title)) return;
+  // if (parsed.find(list => list.title === newList.title)) {
+  //   console.log(allTitles);
+  //   const coincidencesArray = allTitles.find(title => title[0] === newList.title);
 
-  currentStorage.push(newList);
+  //   newList.title = `${newList.title} ${coincidencesArray.length + 1}`;
 
-  currentList = new ToDoList(currentTodosContainer, currentListTitle, { title: newList.title, data: newList.todos });
+  //   coincidencesArray.push(newList.title)
+  // }
 
+  parsed.push(newList);
 
-  localStorage.setItem('todoList', JSON.stringify(currentStorage));
-  localStorage.setItem('todoList_active', JSON.stringify(currentList.title));
+  currentList = new ToDoList(currentTodosContainer, titleContainer, newList);
+
+  localStorage.setItem('todoList', JSON.stringify(parsed));
+  localStorage.setItem('todoList_active', JSON.stringify(newList.id));
+
   updateListOfLists();
   todoInput.value = "";
-})
+}
 
+function changeList(id) {
 
-function changeList(e) {
+  const targetID = id;
+  const parsed = JSON.parse(localStorage.getItem('todoList'));
 
-  const targetList = e.target.textContent;
-  const currentStorage = JSON.parse(localStorage.getItem('todoList'));
+  const targetList = parsed.find(list => list.id === +targetID);
 
-  const dataToLoad = currentStorage.find(list => list.title === targetList);
-  console.log(dataToLoad);
+  currentList = new ToDoList(currentTodosContainer, titleContainer, targetList);
 
-  currentList = new ToDoList(currentTodosContainer, currentListTitle, { title: dataToLoad.title, data: dataToLoad.todos });
-  localStorage.setItem('todoList_active', JSON.stringify(currentList.title));
+  localStorage.setItem('todoList_active', JSON.stringify(currentList.id));
+
   updateListOfLists();
   todoInput.value = "";
 
 }
+
+function deleteList(e) {
+
+  const targetID = e.target.dataset.listid;
+
+  const parsed = JSON.parse(localStorage.getItem('todoList'));
+  const targetList = parsed.find(list => list.id === +targetID);
+  const index = parsed.indexOf(targetList);
+
+  if (currentList.id === targetList.id) {
+    if (parsed.length - 1 > 0) {
+      let prevID = parsed[index - 1].id;
+      changeList(prevID)
+    }
+  }
+
+  parsed.splice(index, 1);
+
+  if (parsed.length === 0) {
+    initLocalStorage();
+  } else {
+    localStorage.setItem('todoList', JSON.stringify(parsed));
+  }
+  updateListOfLists();
+}
+
+function initLocalStorage() {
+  // Init new empty list data structure
+  const newListData = new ToDoListData('Новый список дел', []);
+
+  // Set initial data in localStorage
+  localStorage.setItem('todoList', JSON.stringify([newListData]));
+  localStorage.setItem('todoList_active', JSON.stringify(newListData.id));
+
+  // Init object in DOM
+  currentList = new ToDoList(currentTodosContainer, titleContainer, newListData);
+
+  // Activate input form
+  inputForm.addEventListener("submit", activateForm);
+
+  updateListOfLists();
+}
+
+function loadLocalStorage() {
+  // Parse localStorage
+  const parsed = JSON.parse(localStorage.getItem('todoList'));
+  // allTitles = parsed.map(list => [list.title]);
+
+  // Find active list
+  const activeListSaved = JSON.parse(localStorage.getItem('todoList_active'));
+  let activeList = parsed.find(list => list.id === activeListSaved);
+
+  // Set current list to active list
+  currentList = new ToDoList(currentTodosContainer, titleContainer, activeList);
+
+  // Add new todo to current list
+  inputForm.addEventListener("submit", activateForm);
+
+  updateListOfLists();
+}
+
 
 function activateForm(e) {
   e.preventDefault();
@@ -357,12 +443,3 @@ function activateForm(e) {
 }
 
 
-// currentList = new ToDoList('Новый список задач', currentTodosContainer, currentListTitle);
-
-// // Add new todo to current list
-// inputForm.addEventListener("submit", (e) => {
-//   e.preventDefault();
-
-//   currentList.addNewToDo(todoInput.value);
-//   todoInput.value = "";
-// });
