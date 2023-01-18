@@ -161,12 +161,13 @@ input::selection {
   background-color: rgba(16, 16, 16, 0.33);
   opacity: 1;
   width: 100%;
-  height: 100%;
+  height: 9999px;
   backdrop-filter: blur(18px);
 }
 
 .overlay.hidden {
   visibility: hidden;
+  height: 100%;
 }
 
 body.no-scroll {
@@ -200,6 +201,14 @@ body.no-scroll {
   margin-top: 1rem;
   cursor: pointer;
   transition: var(--transition);
+}
+
+.all-lists-container ul li.active {
+  color: var(--color-red);
+}
+
+.all-lists-container ul li.active:hover {
+  color: var(--color-light);
 }
 
 .all-lists-container ul li:hover {
