@@ -26,69 +26,57 @@ export class ToDoList {
     this.todos = [];
 
     if (todos?.length) {
-      todos.forEach(todo => {
+      todos.forEach((todo) => {
         this.todos.push(todo);
       });
     }
 
     this.renderToDOM();
-    this.currentSortable;
 
     // Init title
-    this.titleElement.textContent = title;
+    this.titleElement.placeholder = title;
+    this.titleElement.maxLength = 40;
     this.title = title;
     this.addTitleListeners();
 
-    // Set selection and focus on title
-    let range = new Range();
-    range.setStartBefore(this.titleElement.firstChild);
-    range.setEndAfter(this.titleElement.firstChild);
-    document.getSelection().removeAllRanges();
-    document.getSelection().addRange(range);
-
-    this.titleElement.focus()
-
+    this.titleElement.focus();
   }
 
   createTitleElement(titleContainer) {
-    titleContainer.innerHTML = '';
+    titleContainer.innerHTML = "";
 
-    const newTitleEl = document.createElement('h2');
-    newTitleEl.classList.add('list-heading');
-    newTitleEl.setAttribute('contenteditable', true);
+    const newTitleEl = document.createElement("input");
+    newTitleEl.classList.add("list-heading");
 
     titleContainer.append(newTitleEl);
 
     return newTitleEl;
   }
 
-  // Change current title
-  changeTitle(text) {
-    this.titleElement.textContent = text;
-    return text;
-  }
-
   addTitleListeners() {
-    this.titleElement.addEventListener('input', (e) => {
-      this.title = this.changeTitle(e.target.textContent);
-      if (!this.title) {
-        alert('Добавьте название списка!')
+
+    this.titleElement.addEventListener("focus", (e) => {
+      e.target.value = this.title;
+    });
+
+    this.titleElement.addEventListener('blur', (e) => {
+      if (!e.target.value) {
+        alert("Добавьте название списка!");
+
+        this.title = 'Новый список дел';
+        e.target.placeholder = this.title;
+        this.updateLSTitle(this.title);
+
         return;
       }
+    })
 
-      // Check if list with identical name exist
-      // let collisions = JSON.parse(localStorage.getItem('todoList')).filter(el => el.title === this.title);
-      // if (collisions.length === 2) return
+    this.titleElement.addEventListener("input", (e) => {
+      this.titleElement.placeholder = ''
+      this.title = e.target.value;
 
       // Update title of current list in localStorage
       this.updateLSTitle(this.title);
-    });
-
-    // Prevent user to type title longer than 40 characters
-    this.titleElement.addEventListener('keydown', (e) => {
-      if (e.target.textContent.length > 40 && e.keyCode != 8) {
-        e.preventDefault();
-      }
     });
 
   }
@@ -99,9 +87,9 @@ export class ToDoList {
     if (!text) return;
 
     // Check if text already exist in list
-    if (this.todos.find(el => el.text === text)) return;
+    if (this.todos.find((el) => el.text === text)) return;
 
-    this.todos.push(new ToDoItem(text, 'active'));
+    this.todos.push(new ToDoItem(text, "active"));
 
     this.updateLSToDos();
     this.renderToDOM();
@@ -118,23 +106,22 @@ export class ToDoList {
   // Mark ToDo as done
   markAsDone(index, el) {
     // Check if ToDo is active
-    if (this.todos[index].status === 'active') {
-      el.querySelector('i').className = 'far fa-light fa-circle-check'
-      el.className = 'todo done';
-      this.todos[index].status = 'done';
+    if (this.todos[index].status === "active") {
+      el.querySelector("i").className = "far fa-light fa-circle-check";
+      el.className = "todo done";
+      this.todos[index].status = "done";
     } else {
-      el.querySelector('i').className = 'far fa-light fa-circle'
-      el.className = 'todo';
-      this.todos[index].status = 'active';
+      el.querySelector("i").className = "far fa-light fa-circle";
+      el.className = "todo";
+      this.todos[index].status = "active";
     }
 
     this.updateLSToDos();
   }
 
   renderToDOM() {
-
     // Reset container
-    this.todosContainer.innerHTML = '';
+    this.todosContainer.innerHTML = "";
 
     // Place each todo in place
     this.todos.forEach((todo, i) => {
@@ -142,20 +129,20 @@ export class ToDoList {
     });
 
     this.addClickEvents();
-    this.addDragEvents();
-
+    // this.addDragEvents();
   }
 
   createDOMElement(todo, index) {
     const { text, status } = todo;
 
     const container = document.createElement("div");
-    container.className = status === 'active' ? 'todo' : 'todo done';
+    container.className = status === "active" ? "todo" : "todo done";
 
     container.dataset.index = index;
     container.innerHTML = `
         <button class="check-button">
-           <i class="far fa-light ${status === "active" ? 'fa-circle' : 'fa-circle-check'}"></i>
+           <i class="far fa-light ${status === "active" ? "fa-circle" : "fa-circle-check"
+      }"></i>
         </button>
 
         <div class="todo-text">
@@ -170,73 +157,50 @@ export class ToDoList {
   }
 
   addClickEvents() {
-    this.todosDOM = this.todosContainer.querySelectorAll('.todo');
-    this.todosDOM.forEach(todoEl => {
+    this.todosDOM = this.todosContainer.querySelectorAll(".todo");
+    this.todosDOM.forEach((todoEl) => {
+      const deleteBtn = todoEl.querySelector(".trash-button");
+      const completeBtn = todoEl.querySelector(".check-button");
 
-      const deleteBtn = todoEl.querySelector('.trash-button');
-      const completeBtn = todoEl.querySelector('.check-button');
 
-      deleteBtn.addEventListener('click', () => {
+      deleteBtn.addEventListener("touchstart", (e) => {
+        e.preventDefault();
         this.deleteToDo(todoEl.dataset.index);
-      })
+      });
 
-      completeBtn.addEventListener('click', () => {
-        this.markAsDone(todoEl.dataset.index, todoEl)
-      })
+      deleteBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.deleteToDo(todoEl.dataset.index);
+      });
+
+      completeBtn.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        this.markAsDone(todoEl.dataset.index, todoEl);
+      });
+
+      completeBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.markAsDone(todoEl.dataset.index, todoEl);
+      });
 
     });
   }
 
-  addDragEvents() {
-
-    // Init Sortable for list
-    this.initSortable();
-    // Add events
-    this.todosDOM.forEach(todoEl => {
-      todoEl.addEventListener("drop", (e) => {
-        console.log(e);
-        // Re arrange array of elements in todos array according to current DOM position
-        this.todos = this.newSort();
-
-        // Re paint the DOM, init with new arranged data
-        this.updateLSToDos();
-        this.renderToDOM();
-
-      })
-    })
-
-
+  updateOnDrag() {
+    this.todos = this.newSort();
+    this.updateLSToDos();
+    this.renderToDOM();
   }
-
-  // Init Sortable object from external library
-  initSortable() {
-    this.currentSortable = new Sortable(this.todosContainer, {
-      animation: 300,
-      onEnd: (e) => {
-        console.log(this.todosDOM);
-        console.log(e.to);
-        console.log(this);
-        // var itemEl = evt.item;  // dragged HTMLElement
-        // evt.to;    // target list
-        // evt.from;  // previous list
-        // evt.oldIndex;  // element's old index within old parent
-        // evt.newIndex;  // element's new index within new parent
-        // evt.oldDraggableIndex; // element's old index within old parent, only counting draggable elements
-        // evt.newDraggableIndex; // element's new index within new parent, only counting draggable elements
-        // evt.clone // the clone element
-        // evt.pullMode;  // when item is in another sortable: `"clone"` if cloning, `true` if moving
-      },
-    });
-  };
 
   // Re arrange array
   newSort() {
-
     const sorted = [];
-    const toDosInDOM = [...this.todosContainer.querySelectorAll('.todo .todo-text p')];
+    const toDosInDOM = [
+      ...this.todosContainer.querySelectorAll(".todo .todo-text p"),
+    ];
 
-    toDosInDOM.forEach(item => {
-      const todoEl = this.todos.find(el => el.text === item.textContent);
+    toDosInDOM.forEach((item) => {
+      const todoEl = this.todos.find((el) => el.text === item.textContent);
       sorted.push(todoEl);
     });
 
@@ -245,34 +209,33 @@ export class ToDoList {
 
   updateLSTitle(newTitle) {
     // Parse localStorage
-    const parsed = JSON.parse(localStorage.getItem('todoList'));
+    const parsed = JSON.parse(localStorage.getItem("todoList"));
 
     // Find corresponding object in parsed localStorage
-    let activeList = parsed.find(list => list.id === this.id);
+    let activeList = parsed.find((list) => list.id === this.id);
 
     // Set title in parsed localStorage
     activeList.title = newTitle;
 
     // Update localStorage properties
-    localStorage.setItem('todoList', JSON.stringify(parsed))
-    localStorage.setItem('todoList_active', JSON.stringify(activeList.id));
+    localStorage.setItem("todoList", JSON.stringify(parsed));
+    localStorage.setItem("todoList_active", JSON.stringify(activeList.id));
   }
 
   updateLSToDos() {
     // Parse localStorage
-    const parsed = JSON.parse(localStorage.getItem('todoList'));
+    const parsed = JSON.parse(localStorage.getItem("todoList"));
 
     // Find corresponding object in parsed localStorage
-    let activeList = parsed.find(list => list.id === this.id);
+    let activeList = parsed.find((list) => list.id === this.id);
 
     // Reset todos in parsed version of localStorage
     activeList.todos = [];
 
     // Push all todos to parsed version of localStorage
-    this.todos.forEach(todo => activeList.todos.push(todo));
+    this.todos.forEach((todo) => activeList.todos.push(todo));
 
     // Set localStorage
-    localStorage.setItem('todoList', JSON.stringify(parsed));
+    localStorage.setItem("todoList", JSON.stringify(parsed));
   }
 }
-

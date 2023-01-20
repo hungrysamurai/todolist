@@ -10,6 +10,11 @@
   --transition: 0.33s cubic-bezier(0.25, 0.25, 0, 1);
 }
 
+[contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 ::selection {
   background-color: var(--color-dark2);
 }
@@ -39,7 +44,6 @@ body {
   text-align: center;
   margin: 3rem 0;
   text-shadow: 2px 2px 12px var(--color-red);
-  transition: var(--transition);
 }
 
 /* Title, input, todos container */
@@ -54,14 +58,32 @@ body {
 
 /* ToDos list Title */
 .list-heading {
+  background-color: transparent;
+  text-align: center;
+  color: var(--color-light);
   font-size: calc(var(--index) * 2);
-  margin-bottom: 1rem;
+  font-family: inherit;
+  margin-bottom: 2rem;
   padding: 0.5rem;
+  outline: 0px;
+  border: none;
+  transition: box-shadow var(--transition), background-color var(--transition);
 }
 
 .list-heading::selection {
   background-color: var(--color-red);
   color: var(--color-dark2);
+}
+
+.list-heading:focus {
+  outline: 2px solid var(--color-light);
+  box-shadow: 0px 0px 12px var(--color-light);
+  background-color: var(--color-dark2);
+}
+
+.list-heading::placeholder {
+  color: var(--color-light);
+  font-size: calc(var(--index) * 2);
 }
 
 /* New todo input */
@@ -84,6 +106,7 @@ body {
   border: 1px solid var(--color-light);
   border-radius: 1rem;
   cursor: pointer;
+  transition: transform var(--transition), color var(--transition);
 }
 
 .form button:hover {
@@ -91,7 +114,7 @@ body {
 }
 
 .form button:active {
-  transform: translateY(0.3rem);
+  transform: translateY(0.2rem);
 }
 
 .form .input {
@@ -104,6 +127,7 @@ body {
   padding: 1rem 2rem;
   display: block;
   width: 100%;
+  transition: box-shadow var(--transition), outline-color var(--transition);
 }
 
 input::selection {
@@ -140,6 +164,7 @@ input::selection {
   align-items: center;
   justify-content: space-between;
   cursor: grab;
+  transition: box-shadow var(--transition);
 }
 
 .todo.done {
@@ -157,7 +182,7 @@ input::selection {
   background-color: transparent;
   border: none;
   padding: 0;
-  transition: var(--transition);
+  transition: color var(--transition);
 }
 
 .todo .trash-button {
@@ -179,7 +204,6 @@ input::selection {
   width: 100%;
 }
 
-/* ??????????????????????????????????????? */
 .todo .todo-text p {
   word-break: break-all;
 }
@@ -191,7 +215,7 @@ input::selection {
   opacity: 1;
   width: 100%;
   height: 9999px;
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(14px);
 }
 
 .overlay.hidden {
@@ -242,6 +266,7 @@ body.no-scroll {
 
 .all-lists-container ul .list-item .list-title.active {
   color: var(--color-red);
+  transition: color var(--transition);
 }
 
 .all-lists-container ul .list-item .list-title.active:hover {
@@ -278,6 +303,12 @@ body.no-scroll {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform var(--transition);
+}
+
+.add-new-list-btn:hover,
+.lists-button:hover {
+  transform: scale(1.1);
 }
 
 .lists-button {
@@ -301,7 +332,29 @@ body.no-scroll {
     border: 2px solid var(--color-light);
   }
 
+  .todo .check-button,
+  .todo .trash-button {
+    font-size: calc(var(--index) * 2);
+  }
+
+  .form .input {
+    font-size: calc(var(--index) * 1.5);
+  }
+
+  .todo {
+    font-size: calc(var(--index) * 1.5);
+  }
   .all-lists-container {
     width: 66%;
+  }
+
+  .buttons-container {
+    width: calc(var(--index) * 7.5);
+    height: calc(var(--index) * 7.5);
+  }
+
+  .add-new-list-btn i,
+  .lists-button i {
+    font-size: calc(var(--index) * 2);
   }
 }
