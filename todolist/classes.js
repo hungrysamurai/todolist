@@ -129,7 +129,6 @@ export class ToDoList {
     });
 
     this.addClickEvents();
-    // this.addDragEvents();
   }
 
   createDOMElement(todo, index) {
@@ -161,7 +160,6 @@ export class ToDoList {
     this.todosDOM.forEach((todoEl) => {
       const deleteBtn = todoEl.querySelector(".trash-button");
       const completeBtn = todoEl.querySelector(".check-button");
-
 
       deleteBtn.addEventListener("touchend", (e) => {
         e.preventDefault();

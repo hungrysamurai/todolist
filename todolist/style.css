@@ -204,9 +204,9 @@ input::selection {
   width: 100%;
 }
 
-.todo .todo-text p {
+/* .todo .todo-text p {
   word-break: break-all;
-}
+} */
 
 /* All lists container */
 .overlay {
