@@ -163,7 +163,7 @@ export class ToDoList {
       const completeBtn = todoEl.querySelector(".check-button");
 
 
-      deleteBtn.addEventListener("touchstart", (e) => {
+      deleteBtn.addEventListener("touchend", (e) => {
         e.preventDefault();
         this.deleteToDo(todoEl.dataset.index);
       });
