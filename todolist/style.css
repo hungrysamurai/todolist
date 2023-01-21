@@ -6,7 +6,7 @@
   --color-dark: rgb(16, 16, 16);
   --color-dark2: rgb(40, 40, 40);
   --color-light: rgb(0, 255, 128);
-  --color-red: rgb(255, 0, 128);
+  --color-red: rgb(177, 34, 65);
   --transition: 0.33s cubic-bezier(0.25, 0.25, 0, 1);
 }
 
@@ -88,6 +88,7 @@ body {
 
 /* New todo input */
 .form {
+  position: relative;
   width: 800px;
   max-width: 95%;
   display: flex;
@@ -96,25 +97,34 @@ body {
 }
 
 .form button {
-  margin: 1.5rem 0 0.5rem 0;
-  padding: 1rem 2rem;
-  font-size: calc(var(--index) * 1);
+  position: absolute;
+  right: 0;
+  top: 2.5%;
+  bottom: 2.5%;
+  width: 10%;
+  height: 95%;
+  border: none;
+  z-index: 0;
+  /* margin: 1.5rem 0 0.5rem 0; */
+  /* padding: 1rem; */
+  font-size: calc(var(--index) * 1.5);
   font-family: inherit;
-  color: var(--color-light);
-  background-color: var(--color-dark2);
-  box-shadow: 2px 2px 12px var(--color-red);
-  border: 1px solid var(--color-light);
-  border-radius: 1rem;
+  color: var(--color-red);
+  background-color: var(--color-light);
+  box-shadow: 2px 2px 12px var(--color-light);
+  /* border: 1px solid var(--color-light); */
+  border-radius: 0;
   cursor: pointer;
-  transition: transform var(--transition), color var(--transition);
+  transition: transform var(--transition), color var(--transition), background-color var(--transition);
 }
 
 .form button:hover {
-  color: var(--color-red);
+  color: var(--color-light);
+  background-color: var(--color-red)
 }
 
 .form button:active {
-  transform: translateY(0.2rem);
+  transform: scale(0.9);
 }
 
 .form .input {
@@ -327,9 +337,9 @@ body.no-scroll {
   }
 
   .form button {
-    padding: 0.5rem 1rem;
-    font-size: calc(var(--index) * 1.5);
-    border: 2px solid var(--color-light);
+    /* padding: 0.5rem 1rem; */
+    font-size: calc(var(--index) * 2);
+    width: 20%;
   }
 
   .todo .check-button,
@@ -344,6 +354,7 @@ body.no-scroll {
   .todo {
     font-size: calc(var(--index) * 1.5);
   }
+
   .all-lists-container {
     width: 66%;
   }
