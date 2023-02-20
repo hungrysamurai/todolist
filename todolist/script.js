@@ -15,7 +15,6 @@ const addNewListBtn = document.querySelector(".add-new-list-btn");
 
 // Init
 let currentList;
-// let allTitles = [];
 
 // Get items from localStorage
 if (!localStorage.getItem("todoList")) initLocalStorage();
