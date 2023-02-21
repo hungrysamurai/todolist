@@ -101,10 +101,10 @@ body {
 .form button {
   position: absolute;
   right: 0;
-  top: 2.5%;
-  bottom: 2.5%;
+  top: 0;
+  bottom: 0;
   width: 10%;
-  height: 95%;
+  height: 100%;
   border: none;
   z-index: 0;
   /* margin: 1.5rem 0 0.5rem 0; */
