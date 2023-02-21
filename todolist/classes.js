@@ -171,7 +171,7 @@ export class ToDoList {
         this.deleteToDo(todoEl.dataset.index);
       });
 
-      completeBtn.addEventListener("touchmove", (e) => {
+      completeBtn.addEventListener("touchstart", (e) => {
         e.preventDefault();
         this.markAsDone(todoEl.dataset.index, todoEl);
       });

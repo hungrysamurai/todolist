@@ -23,9 +23,30 @@ else loadLocalStorage();
 // Init Sortable
 const sortable = new Sortable(currentTodosContainer, {
   animation: 300,
+  delay: 250,
   easing: "cubic-bezier(1, 0, 0, 1)",
   onEnd: () => {
     currentList.updateOnDrag();
+  },
+  onChoose: function (e) {
+    const todoTop = e.originalEvent.offsetY;
+    const todoLeft = e.originalEvent.offsetX;
+
+    const chosenMark = document.createElement('span');
+    chosenMark.classList.add('chosen');
+
+    if (todoTop) {
+      chosenMark.style.top = todoTop + 'px';
+      chosenMark.style.left = todoLeft + 'px';
+    } else {
+      chosenMark.style.top = '50%';
+      chosenMark.style.left = '50%';
+    }
+
+    e.item.append(chosenMark);
+
+    setTimeout(() => chosenMark.remove(), 300)
+
   },
 });
 
