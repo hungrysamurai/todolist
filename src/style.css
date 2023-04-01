@@ -10,12 +10,12 @@
   --transition: 0.33s cubic-bezier(0.25, 0.25, 0, 1);
 }
 
-[contenteditable] {
+/* [contenteditable] {
   -webkit-user-select: text;
   user-select: text;
-}
+} */
 
-::selection {
+*::selection {
   background-color: var(--color-dark2);
 }
 
@@ -26,7 +26,7 @@
 }
 
 body {
-  background: url("./dark_noise.jpg");
+  background: var(--color-dark);
   background-repeat: repeat;
   background-size: 50px 50px;
   color: var(--color-light);
@@ -107,15 +107,13 @@ body {
   height: 100%;
   border: none;
   z-index: 0;
-  /* margin: 1.5rem 0 0.5rem 0; */
-  /* padding: 1rem; */
   font-size: calc(var(--index) * 1.5);
   font-family: inherit;
   color: var(--color-red);
   background-color: var(--color-light);
   box-shadow: 2px 2px 12px var(--color-light);
   /* border: 1px solid var(--color-light); */
-  border-radius: 0;
+  border-radius: calc(var(--index) * 0.6);
   cursor: pointer;
   transition: transform var(--transition), color var(--transition),
     background-color var(--transition);
@@ -133,13 +131,14 @@ body {
 .form .input {
   box-shadow: 2px 2px 12px var(--color-red);
   border: none;
+  border-radius: calc(var(--index) * 0.6);
   background-color: var(--color-dark2);
   color: #fff;
   font-size: calc(var(--index) * 1);
   font-family: "Jost", sans-serif;
-  padding: 1rem 1rem;
+  padding: 1rem 11% 1rem 1rem;
   display: block;
-  width: 90%;
+  width: 100%;
   transition: box-shadow var(--transition), outline-color var(--transition);
 }
 
@@ -160,25 +159,31 @@ input::selection {
 
 /* ToDos Container */
 .todos-container {
-  padding: 1rem;
-  width: 100%;
+  padding: 1rem 0 1rem 0;
+  width: 800px;
+  max-width: 95%;
 }
 
 /* Single todo */
 .todo {
   position: relative;
-  margin: 1rem 0;
+  margin: 0.75rem 0;
   background-color: var(--color-dark2);
   padding: 1rem 1.5rem;
   font-size: calc(var(--index) * 1.2);
   text-align: left;
   box-shadow: 2px 2px 12px var(--color-red);
+  border-radius: calc(var(--index) * 0.6);
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: grab;
   transition: box-shadow var(--transition);
   overflow: hidden;
+}
+
+.todo.active {
+  background-color: var(--color-dark1);
 }
 
 .todo .chosen {
@@ -206,7 +211,8 @@ input::selection {
 
 /* Check/trash buttons */
 .todo .check-button,
-.todo .trash-button {
+.todo .trash-button,
+.todo .edit-button {
   position: relative;
   cursor: pointer;
   font-size: inherit;
@@ -217,11 +223,13 @@ input::selection {
   transition: color var(--transition);
 }
 
-.todo .trash-button {
+.todo .trash-button,
+.todo .edit-button {
   font-size: 90%;
-  margin-left: 2rem;
+  margin-left: .75rem;
 }
 
+.todo .edit-button:hover,
 .todo .trash-button:hover {
   color: var(--color-red);
 }
@@ -236,9 +244,27 @@ input::selection {
   width: 100%;
 }
 
-/* .todo .todo-text p {
+.todo .todo-text p {
   word-break: break-all;
-} */
+}
+
+.todo .todo-text input {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-size: calc(var(--index) * 1.2);
+  font-family: inherit;
+  word-break: break-all;
+  resize: none;
+  display: block;
+  overflow: visible;
+}
+
+.todo .todo-text input:focus {
+  border: none;
+  outline: none;
+}
 
 /* All lists container */
 .overlay {
@@ -366,12 +392,17 @@ body.no-scroll {
   .form button {
     /* padding: 0.5rem 1rem; */
     font-size: calc(var(--index) * 2);
-    width: 10%;
+    width: 15%;
+  }
+
+  .form .input {
+    padding: 1rem 16% 1rem 1rem;
   }
 
   .todo .check-button,
-  .todo .trash-button {
-    font-size: calc(var(--index) * 2);
+  .todo .trash-button,
+  .todo .edit-button {
+    font-size: calc(var(--index) * 1.8);
   }
 
   .form .input {
@@ -379,6 +410,10 @@ body.no-scroll {
   }
 
   .todo {
+    font-size: calc(var(--index) * 1.5);
+  }
+
+  .todo .todo-text input {
     font-size: calc(var(--index) * 1.5);
   }
 

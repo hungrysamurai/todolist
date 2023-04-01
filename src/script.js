@@ -1,3 +1,4 @@
+import Sortable from "sortablejs";
 import { ToDoListData, ToDoList } from "./classes.js";
 
 // DOM Elements
@@ -29,24 +30,24 @@ const sortable = new Sortable(currentTodosContainer, {
     currentList.updateOnDrag();
   },
   onChoose: function (e) {
+    e.item.classList.add("active");
     const todoTop = e.originalEvent.offsetY;
     const todoLeft = e.originalEvent.offsetX;
 
-    const chosenMark = document.createElement('span');
-    chosenMark.classList.add('chosen');
+    const chosenMark = document.createElement("span");
+    chosenMark.classList.add("chosen");
 
     if (todoTop) {
-      chosenMark.style.top = todoTop + 'px';
-      chosenMark.style.left = todoLeft + 'px';
+      chosenMark.style.top = todoTop + "px";
+      chosenMark.style.left = todoLeft + "px";
     } else {
-      chosenMark.style.top = '50%';
-      chosenMark.style.left = '50%';
+      chosenMark.style.top = "50%";
+      chosenMark.style.left = "50%";
     }
 
     e.item.append(chosenMark);
 
-    setTimeout(() => chosenMark.remove(), 300)
-
+    setTimeout(() => chosenMark.remove(), 200);
   },
 });
 

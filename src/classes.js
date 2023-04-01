@@ -54,31 +54,29 @@ export class ToDoList {
   }
 
   addTitleListeners() {
-
     this.titleElement.addEventListener("focus", (e) => {
       e.target.value = this.title;
     });
 
-    this.titleElement.addEventListener('blur', (e) => {
+    this.titleElement.addEventListener("blur", (e) => {
       if (!e.target.value) {
         alert("Добавьте название списка!");
 
-        this.title = 'Новый список дел';
+        this.title = "Новый список дел";
         e.target.placeholder = this.title;
         this.updateLSTitle(this.title);
 
         return;
       }
-    })
+    });
 
     this.titleElement.addEventListener("input", (e) => {
-      this.titleElement.placeholder = ''
+      this.titleElement.placeholder = "";
       this.title = e.target.value;
 
       // Update title of current list in localStorage
       this.updateLSTitle(this.title);
     });
-
   }
 
   // Add new ToDo
@@ -101,6 +99,38 @@ export class ToDoList {
 
     this.updateLSToDos();
     this.renderToDOM();
+  }
+
+  editToDo(index, el) {
+    if (!el.querySelector(".todo-text p")) {
+      const newText = el.querySelector(".todo-text input").value;
+      this.todos[index].text = newText;
+
+      this.updateLSToDos();
+      this.renderToDOM();
+    } else {
+      el.querySelector(".todo-text p").remove();
+
+      const currentIcon = el.querySelector(".edit-button i");
+
+      currentIcon.classList.remove("fa-pen");
+      currentIcon.classList.add("fa-check");
+
+      const editInput = document.createElement("input");
+      editInput.setAttribute("type", "text");
+      editInput.value = this.todos[index].text;
+
+      el.querySelector(".todo-text").append(editInput);
+      editInput.focus();
+
+      editInput.addEventListener("blur", (e) => {
+        const newText = e.target.value;
+        this.todos[index].text = newText;
+
+        this.updateLSToDos();
+        this.renderToDOM();
+      });
+    }
   }
 
   // Mark ToDo as done
@@ -140,13 +170,18 @@ export class ToDoList {
     container.dataset.index = index;
     container.innerHTML = `
         <button class="check-button">
-           <i class="far fa-light ${status === "active" ? "fa-circle" : "fa-circle-check"
-      }"></i>
+           <i class="far fa-light ${
+             status === "active" ? "fa-circle" : "fa-circle-check"
+           }"></i>
         </button>
 
         <div class="todo-text">
         <p>${text}</p>
         </div>
+
+        <button class="edit-button">
+          <i class="fas fa-solid fa-pen"></i>
+        </button>
 
         <button class="trash-button">
           <i class="fas fa-solid fa-trash-can"></i>
@@ -158,8 +193,19 @@ export class ToDoList {
   addClickEvents() {
     this.todosDOM = this.todosContainer.querySelectorAll(".todo");
     this.todosDOM.forEach((todoEl) => {
+      const editBtn = todoEl.querySelector(".edit-button");
       const deleteBtn = todoEl.querySelector(".trash-button");
       const completeBtn = todoEl.querySelector(".check-button");
+
+      editBtn.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        this.editToDo(todoEl.dataset.index, todoEl);
+      });
+
+      editBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.editToDo(todoEl.dataset.index, todoEl);
+      });
 
       deleteBtn.addEventListener("touchend", (e) => {
         e.preventDefault();
@@ -180,7 +226,6 @@ export class ToDoList {
         e.preventDefault();
         this.markAsDone(todoEl.dataset.index, todoEl);
       });
-
     });
   }
 
