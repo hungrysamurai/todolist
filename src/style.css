@@ -113,7 +113,7 @@ body {
   background-color: var(--color-light);
   box-shadow: 2px 2px 12px var(--color-light);
   /* border: 1px solid var(--color-light); */
-  border-radius: calc(var(--index) * 0.6);
+  border-radius: 0 calc(var(--index) * 0.6) calc(var(--index) * 0.6) 0;
   cursor: pointer;
   transition: transform var(--transition), color var(--transition),
     background-color var(--transition);
@@ -226,7 +226,7 @@ input::selection {
 .todo .trash-button,
 .todo .edit-button {
   font-size: 90%;
-  margin-left: .75rem;
+  margin-left: 0.75rem;
 }
 
 .todo .edit-button:hover,
