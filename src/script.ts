@@ -133,9 +133,8 @@ function changeList(id: string): void {
 
 /**
  * @property {Function} toggleListOfLists - Toggle list of lists container in DOM
- * @returns {void}
  */
-function toggleListOfLists() {
+function toggleListOfLists(): void {
   overlay.classList.toggle("hidden");
   allListsContainer.classList.toggle("hidden");
   body.classList.toggle("no-scroll");
@@ -229,9 +228,8 @@ function initLocalStorage(): void {
 
 /**
  * @property {Function} loadLocalStorage - retrieve data from localStorage
- * @returns {void}
  */
-function loadLocalStorage() {
+function loadLocalStorage(): void {
   // Parse localStorage
   const parsed: ToDoListData[] = JSON.parse(localStorage.getItem("todoList") as string);
 
@@ -267,7 +265,7 @@ function activateForm(e: SubmitEvent): void {
  * @property {Function} highlightToDo - Highlight choosen todo item
  * @param {CustomEvent} e - event object that comes from Sortable event fired when item become active
  */
-function highlightToDo(e: SortableEventWithOriginalProp) {
+function highlightToDo(e: SortableEventWithOriginalProp): void {
   e.item.classList.add("active");
 
   const todoTop = e.originalEvent.layerY;
